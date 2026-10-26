@@ -1,0 +1,16 @@
+path: dataset/processed
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 8
+
+names:
+  0: bottle
+  1: keyboard
+  2: laptop
+  3: pendrive
+  4: phone
+  5: mug
+  6: bin
+  7: mouse
