@@ -3,17 +3,17 @@ import streamlit as st
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MODEL_PATH = ROOT / "weights" / "best.pt"
+MODEL_PATH = ROOT / "model" / "best.pt"
 GRAPHS = ROOT / "runs" / "detect" / "train"
-APP_TITLE = "Office Items Classifier"
+APP_TITLE = "Office Items Detector"
 CLASSES = ["Laptop", "Keyboard", "Mouse", "Pendrive", "Mug", "Bottle", "Phone", "Bin"]
 
 # model popup information
 MODEL_INFO = {
-    "task": "This image-classification model predicts the category of an office item from an uploaded image or a live camera capture.",
-    "uses": "a YOLOv8 model (Ultralytics) fine-tuned on a merged office-item dataset, "
-            "split 70/20/10 into train/validation/test. Each prediction comes with a "
-            "bounding box and a confidence score.",
+    "task": "This object detection model identifies and locates office items in uploaded images or live camera feed.",
+    "uses": "a YOLOv8n model (Ultralytics), fine-tuned on a merged office-item dataset, "
+            "split into 70% training, 20% validation and 10% testing per class. "
+            "Each detection is displayed with a bounding box and a confidence score.",
     # scores
     "metrics": {
         "Accuracy": None,
@@ -39,7 +39,7 @@ def show_model_info():
     )
     st.markdown(
         f'<div class="model-info-body">{html.escape(MODEL_INFO["task"])}<br>'
-        f'Classes ({len(CLASSES)}): {html.escape(format_class_names())}.<br>'
+        f'<strong>Classes ({len(CLASSES)}):</strong> {html.escape(format_class_names())}.<br>'
         f'It uses {html.escape(MODEL_INFO["uses"])}</div>',
         unsafe_allow_html=True,
     )

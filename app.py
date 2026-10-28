@@ -50,23 +50,32 @@ def analyse(image):
             verbose=False
         )[0]
 
+    detections = []
     boxes = result.boxes
 
     # skip images with no detections
     if boxes is None or len(boxes) == 0:
-        return "No object detected", 0.0, image.copy()
+        return [], image.copy()
 
-    best_index = int(boxes.conf.argmax().item())  
-    class_id = int(boxes.cls[best_index].item())
-    category = result.names[class_id]
-    confidence = float(boxes.conf[best_index].item()) * 100
+    for box in boxes:
+        class_id = int(box.cls[0].item())
+        category = result.names[class_id]
+        confidence = float(box.conf[0].item()) * 100
+
+        detections.append({
+            "category": category,
+            "confidenceScore": confidence
+        })
+
+    # sort in order of confidence score
+    sorted_detections = sorted(detections, key=lambda d: d['confidenceScore'], reverse=True)
 
     annotated_bgr = result.plot()
     annotated = Image.fromarray(
         annotated_bgr[:, :, ::-1].copy()
     )
 
-    return category, confidence, annotated
+    return sorted_detections, annotated
 
 def detect_live_frame(frame, model, model_lock):
     # convert video frame to array
@@ -119,7 +128,7 @@ if info_col.button("Info", key="info_btn", icon=":material/info:", help="About t
 
 # panel with the classes
 class_items = "".join(
-    f'<div class="class-item">{html.escape(item)}</div>' 
+    f'<div class="class-item">&middot {html.escape(item)}</div>' 
     for item in CLASSES
 )
 st.markdown(
@@ -132,7 +141,7 @@ st.markdown(
 
 # choose upload or camera
 st.markdown(
-    '<div class="upload-title">Provide Image for Classification</div>', 
+    '<div class="upload-title">Provide Image for Object Detection</div>', 
     unsafe_allow_html=True
 )
 upload_col, camera_col = st.columns(2, gap="large")
@@ -159,7 +168,7 @@ if state.mode == "Upload Image":
 else:
     camera_mode = st.radio(
         "Camera option",
-        ["Take a Photo", "Live Detection"],
+        ["Live Detection", "Take a Photo"],
         horizontal=True,
         label_visibility="collapsed",
         key="camera_input_mode"
@@ -171,9 +180,11 @@ else:
             key=f"camera_{state.upload_key}",
             label_visibility="collapsed"
         )
+        if file is None:
+            state.pop("result", None) # clear previous results
 
     else:
-        state.pop("result", None) # clear previous results
+        state.pop("result", None)
 
         live_model = load_model()
         model_lock = get_model_lock()
@@ -231,12 +242,14 @@ if photo_mode:
     analyse_clicked = analyse_col.button(
         "Analyse Image",
         key="analyse",
-        type="primary"
+        type="primary",
+        disabled=image is None
     )
 
     clear_clicked = clear_col.button(
         "Clear Image",
-        key="clear"
+        key="clear",
+        disabled=image is None
     )
 
 if clear_clicked:
@@ -273,11 +286,10 @@ if analyse_clicked:
             )
 
             try:
-                category, confidence, annotated_image = analyse(image)
+                detections, annotated_image = analyse(image)
 
                 state.result = {
-                    "category": category, 
-                    "confidence": confidence, 
+                    "detections": detections, 
                     "image": annotated_image
                 }
 
@@ -319,21 +331,38 @@ elif photo_mode and "result" in state:
 # classification result
 result = state.get("result")
 if photo_mode and result and "error" not in result:
-    confidence_score = result["confidence"]
-    if confidence_score >= 85:
-        confidence_label = "High confidence"
-    elif confidence_score >= 60:
-        confidence_label = "Moderate confidence"
+    detections = result["detections"]
+    if detections:
+        results_html= ""
+
+        # display all detections
+        for index, item in enumerate(detections, start=1):
+            confidence_score = item["confidenceScore"]
+            if confidence_score >= 85:
+                confidence_label = "High confidence"
+                confidence_class="high"
+            elif confidence_score >= 60:
+                confidence_label = "Moderate confidence"
+                confidence_class="moderate"
+            else:
+                confidence_label = "Low confidence"
+                confidence_class="low"
+
+            results_html += (
+                f'<div class="class-result-item">'
+                f'<div class="class-result-label">{index}. {html.escape(item["category"])}</div>'
+                f'<div class="confidence-row"><span>Confidence Level</span><span>{confidence_score:.1f}%</span></div>'
+                f'<div class="confidence-bar"><div class="confidence-bar-fill" style="width:{confidence_score:.1f}%"></div></div>'
+                f'<div style="text-align:center"><span class="confidence-level {confidence_class}">{confidence_label}</span></div>'
+                f'</div>'
+            )
     else:
-        confidence_label = "Low confidence"
-    
+        results_html= (f'<div class="class-result-label" style="text-align:center">No object detected</div>')
+
     st.markdown(
         f'<div class="classification-result">'
-        f'<div class="classification-result-title">Classification Result</div>'
-        f'<div class="class-result-label">{html.escape(result["category"])}</div>'
-        f'<div class="confidence-row"><span>Confidence Level</span><span>{confidence_score:.1f}%</span></div>'
-        f'<div class="confidence-bar"><div class="confidence-bar-fill" style="width:{confidence_score:.1f}%"></div></div>'
-        f'<div style="text-align:center"><span class="confidence-level">{confidence_label}</span></div>'
+        f'<div class="classification-result-title">Detection Results</div>'
+        f'{results_html}'
         f'</div>',
         unsafe_allow_html=True,
     )

@@ -54,21 +54,26 @@ header[data-testid="stHeader"]{
 }
 .classes-panel h4{
   font-weight:400;
-  font-size:1.05rem;
+  font-size:1.06rem;
   margin:0 0 1.2rem;
 }
 .classes-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:1.15rem 2.6rem;
-  padding:0 3rem;
+  gap:0.65rem 10rem;
+  width:fit-content;
+  padding:0;
+  text-align:left;
+  margin: 0 auto;
 }
 .class-item{
-  background:#fff;
-  border-radius:6px;
-  padding:.62rem 0;
+  background:transparent;
+  padding:0;
+  margin:0;
   font-size:.95rem;
-  letter-spacing:.09em;
+  letter-spacing:.03em;
+  text-align:left;
+  color: #444
 }
 
 /* image upload labels */
@@ -244,23 +249,25 @@ header[data-testid="stHeader"]{
   text-align:center;
   font-weight:700;
   text-decoration:underline;
+  font-size:1.2rem;
 }
 .class-result-label{
-  text-align:center;
+  text-align:left;
   color:#0070f0;
   font-weight:700;
-  font-size:2.2rem;
-  margin:1rem 0;
+  font-size:1.4rem;
+  margin:0;
 }
 .confidence-row{
   display:flex;
   justify-content:space-between;
   margin-bottom:.35rem;
+  font-size:0.9rem;
 }
 .confidence-bar{
   background:#fff;
   border-radius:99px;
-  height:26px;
+  height:20px;
   overflow:hidden;
 }
 .confidence-bar-fill{
@@ -268,9 +275,11 @@ header[data-testid="stHeader"]{
   height:100%;
   animation:growAnimation 1.1s ease-out;
 }
+
 @keyframes growAnimation{
   from{width:0!important;}
 }
+
 .confidence-level{
   display:inline-block;
   padding:.2rem .8rem;
@@ -278,6 +287,30 @@ header[data-testid="stHeader"]{
   background:#fff;
   font-size:.85rem;
   margin-top:.9rem;
+}
+
+.confidence-level.high{
+  background:#DDF3E4;
+  color: #217346
+}
+
+.confidence-level.moderate{
+  background:#FFF0CC;
+  color: #805B00
+}
+
+.confidence-level.low{
+  background:#FCE2E2;
+  color: #A32626
+}
+
+.class-result-item{
+  padding: 5px 0;
+}
+
+.class-result-item:not(:first-child){
+  border-top: 1px solid #d9e2ec;
+  margin-top:12px;
 }
 
 /* popup for model info */
@@ -289,11 +322,13 @@ div[data-testid="stDialog"] h2{
   text-align:center;
   font-weight:700;
   width:100%;
+  margin:0;
+  padding-bottom:0;
 }
 .sub-heading{
   font-weight:700;
   font-size:1.25rem;
-  margin:1.5rem 0 .4rem;
+  margin:.9rem 0 .4rem;
 }
 .model-info-body{
   line-height:1.7;
@@ -326,5 +361,11 @@ div[data-testid="stDialog"] h2{
   text-align:center;
   padding:1rem;
   background:rgba(255,255,255,.35);
+}
+
+button:disabled, button:disabled:hover{
+  background:#c5d3e1 !important;
+  color:#65758a !important;
+  opacity:1 !important;
 }
 """
