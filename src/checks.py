@@ -1,4 +1,5 @@
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -18,7 +19,6 @@ CLASS_IDS={
 }
 
 IMAGE_EXT = {".jpg", ".png", ".jpeg"}
-
 
 def check_img_format(folder):
     ''' check all images are in correct format '''
@@ -111,16 +111,50 @@ def sets_count(folder):
 
     return (imageCount, labelCount)
 
+def image_count_per_class(folder):
+    ''' get number of images per class '''
+    counts = {name: 0 for name in CLASS_IDS}
+
+    for file in (folder/"images").glob("*"):
+        if file.suffix.lower() in IMAGE_EXT:
+            labelName = file.stem
+            class_name = labelName.split("_")[0]
+            counts[class_name] += 1
+
+    return counts
+
+def plot_image_distribution(classCounts, title):
+    classes = list(classCounts.keys())
+    counts = list(classCounts.values())
+
+    plt.figure(figsize=(10,6))
+    plt.bar(classes, counts, color="mediumpurple")
+    plt.title(title)
+    plt.xlabel('Object Class', fontweight='bold')
+    plt.ylabel('Number of Images', fontweight='bold')
+    plt.show()
+
+
 def run_checks(folder, name):
     imageCount, labelCount = sets_count(folder)    
     noLabels, noImages = check_pairs(folder)
-    print(f"\n\nChecks for {name} set:")
+    classCounts = image_count_per_class(folder)
+
+    print(f"{name} set")
     print(f"Number of Images: {imageCount}")
     print(f"Number of Labels: {labelCount}")
+    
+    print(f"\nImages per class")
+    for className, count in classCounts.items():
+        print(f"{className}: {count}")
+
+    print("\nChecks")
     print(f"Incorrect Image Format: {check_img_format(folder)}")
     print(f"Images without labels: {len(noLabels)}")
     print(f"Labels without images: {len(noImages)}")
-    print(f"Incorrect annotations: {check_annotations(folder)}")
+    print(f"Incorrect annotations: {check_annotations(folder)}\n\n")
+
+    plot_image_distribution(classCounts, f"Image Distribution in {name} folder")
 
 
 if __name__ == "__main__":

@@ -10,8 +10,6 @@ import shutil
 import numpy as np
 from PIL import Image, ImageOps
 import imagehash
-from ultralytics.utils.ops import segments2boxes
-
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DATA_DIR = ROOT/"dataset"/"raw"
