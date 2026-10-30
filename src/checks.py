@@ -128,7 +128,8 @@ def plot_image_distribution(classCounts, title):
     counts = list(classCounts.values())
 
     plt.figure(figsize=(10,6))
-    plt.bar(classes, counts, color="mediumpurple")
+    bars = plt.bar(classes, counts, color="mediumpurple")
+    plt.bar_label(bars, padding=3)
     plt.title(title)
     plt.xlabel('Object Class', fontweight='bold')
     plt.ylabel('Number of Images', fontweight='bold')
