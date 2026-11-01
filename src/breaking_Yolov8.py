@@ -7,7 +7,7 @@ root = Path(__file__).resolve().parent.parent
 # dataYAML = root/"dataset"/"data.yaml"
 Img =  root/"dataset"/ "processed"/ "test" /"images"
 labels = root/"dataset"/ "processed"/ "test" /"labels"
-weights = root / "weights"/ "yolo26n.pt"
+weights = root/"runs/detect/office_items_detection/weights/best.pt"
 
 #creating the classes from data.yaml
 # with open(dataYAML) as file:
@@ -68,16 +68,16 @@ def nms(boxes, scores, conf_thr=0.5, nms_thr=0.4):
     return np.array(keep).flatten().tolist()
 
 #draw function (for now not in use)
-# def draw(img, boxes, scores, class_ids, keep=None):
-#     out = img.copy()
-#     idx = range(len(boxes)) if keep is None else keep
-#     for i in idx:
-#         x, y, w, h = boxes[i]
-#         c = colours[class_ids[i]]
-#         cv2.rectangle(out, (x, y), (x + w, y + h), c, 2)
-#         cv2.putText(out, f"{classes[class_ids[i]]} {scores[i]:.2f}", (x, max(y - 5, 12)),
-#                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, c, 2)
-#     return out
+def draw(img, boxes, scores, class_ids, keep=None):
+    out = img.copy()
+    idx = range(len(boxes)) if keep is None else keep
+    for i in idx:
+        x, y, w, h = boxes[i]
+        c = colours[class_ids[i]]
+        cv2.rectangle(out, (x, y), (x + w, y + h), c, 2)
+        cv2.putText(out, f"{classes[class_ids[i]]} {scores[i]:.2f}", (x, max(y - 5, 12)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, c, 2)
+    return out
 
 #calling the above functions to test and break system
 #calling load_net to ipplement weights 
