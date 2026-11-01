@@ -83,8 +83,10 @@ tests = {
 
 #loading the images
 img_path= sorted(p for p in Img.iterdir() if p.suffix.lower() in{".jpg", ".jpeg", ".png"})
+print(len(img_path), "Total images")
+stats = {n: {"tp":0,"fp":0,"fn":0,"time":0.0, "conf":[], "with_det":0, "n":0 } for n in tests}
 #testing for 5 images
-for p in img_path[:5]:
+for p in enumerate(img_path,1):
     img= cv2.imread(str(p))
     if img is None:
         continue
@@ -95,10 +97,28 @@ for p in img_path[:5]:
          im= newImg(img)
          boxes, scores, ids, heads, t = detect(net, im)
          keep = nms(boxes, scores)
-         print("ids", ids)
-         print("scores", scores)
-         print("keep", keep)
+         pred= {ids[i] for i in keep}
+
+         #designing a stats for the images
+         s= stats[name]
+         s["n"] +=1
+         s["time"]+= t
+         s["conf"] += [scores[i] for i in keep]
+         s["with_det"] +=1 if keep else 0
+         s["tp"] += len(pred & truth)
+         s["fp"] += len(pred - truth)
+         s["fn"] += len(truth - pred)
 
          #getting an issue with the ids array
          found = [f"{classes[ids[i]]} {scores[i]:.2f}" for i in keep]
          print(f"{name:9s}: {found}      ({t*1000:.0f} ms)")
+
+print(f"\nYolo11n     ({len(img_path)}images)")
+print(f"{'test'}    {'precision'}    {'recall'}    {'avg conf'}    {'detected'}    {'ms/img'}")
+for name, s in stats.items():
+    prec= s["tp"]/ max(s["tp"] + s["fp"],1)
+    rec = s["tp"]/ max(s["tp"] + s["fn"],1)
+    conf = np.mean(s["conf"]) if s["conf"] else 0
+    det = 100 * s["with_det"]/ max(s["n"],1)
+    ms =  1000 * s["time"]/ max(s["n"],1)
+    print(f"{name}   {prec}   {rec}   {conf}   {det}   {ms}")
