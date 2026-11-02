@@ -3,14 +3,13 @@ train: train/images
 val: valid/images
 test: test/images
 
-nc: 8
+nc: 7
 
 names:
   0: bottle
-  1: keyboard
+  1: scissors
   2: laptop
-  3: pendrive
-  4: phone
-  5: mug
-  6: bin
-  7: mouse
+  3: smartphone
+  4: mug
+  5: bin
+  6: mouse
