@@ -9,13 +9,12 @@ TEST_DIR = ROOT/"dataset"/"processed"/"test"
 
 CLASS_IDS={
     "bottle": 0,
-    "keyboard": 1,
+    "scissors": 1,
     "laptop": 2,
-    "pendrive": 3,
-    "phone": 4,
-    "mug": 5,
-    "bin": 6,
-    "mouse": 7
+    "smartphone": 3,
+    "mug": 4,
+    "bin": 5,
+    "mouse": 6
 }
 
 IMAGE_EXT = {".jpg", ".png", ".jpeg"}
