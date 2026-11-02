@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW_DATA_DIR = ROOT/"dataset"/"raw"
 PROCESSED_DATA_DIR = ROOT/"dataset"/"processed"
 
-TOTAL_ITEM_IMAGES = 500
+TOTAL_ITEM_IMAGES = 700
 TRAIN = 0.7
 VAL = 0.2
 TEST = 0.1
@@ -24,31 +24,37 @@ RANDOM_SEED = 42
 
 CLASS_NAMES={
     0: "bottle",
-    1: "keyboard",
+    1: "scissors",
     2: "laptop",
-    3: "pendrive",
-    4: "phone",
-    5: "mug",
-    6: "bin",
-    7: "mouse"
+    3: "smartphone",
+    4: "mug",
+    5: "bin",
+    6: "mouse"
 }
 
 SOURCE_CLASS_ID_MAPPING={
-    "bottle-detection-1" :{ 0: 0},
-    "Office-Keyboard-Detection-3": {0:1},
-    "Laptop-1": {1:2},
-    "Pendrive-detection-1": {0:3},
-    "Pendrive-detection-6": {0:3},
-    "Flash-drive-image-2": {0:3},
-    "Phone-1": {0: 4},
-    "Mug-OpenImages--1": {0:5},
-    "Trash can.v1i.yolov8": {0:6},
-    "Office-Mouse-1":{ 0:7}
+    "bottle-detection-1": {0:0},
+    "cup-bottle-4": {0:0},
+
+    "scissors-6": {0:1},
+    "Scissors-2": {0:1}, 
+    "scissors-1": {0:1},
+    "Gunting-3-2": {0:1}, 
+    
+    "laptop-2": {0:2}, 
+    "laptop-1": {0:2},  
+    "Laptop-3": {0:2}, 
+    "laptop-4": {0:2},
+
+    "smartphone-1": {0:3},
+    "Mobile-Phone-1": {0:3}, 
+
+    "Mug-OpenImages--1": {0:4},
+    "Office-Trashcan-2": {0:5},
+    "Office-Mouse-1":{ 0:6},
 }
 
 DUPLICATE_THRESH = 5
-
-SPLIT_PRIORITY = {"train": 0, "valid": 1, "test": 2, None:0}
 
 def get_hashes(imgPath):
     ''' hash of image and its mirrored version '''
@@ -303,9 +309,9 @@ def split_dataset():
         )
 
     quotas = {
-        "train": int(TOTAL_ITEM_IMAGES * TRAIN),
-        "valid": int(TOTAL_ITEM_IMAGES * VAL),
-        "test": int(TOTAL_ITEM_IMAGES * TEST)
+        "train": round(TOTAL_ITEM_IMAGES * TRAIN),
+        "valid": round(TOTAL_ITEM_IMAGES * VAL),
+        "test": round(TOTAL_ITEM_IMAGES * TEST)
     }
 
     splitPairs = {
@@ -354,8 +360,6 @@ def split_dataset():
 
                 for c in targetClasses:
                     classCounts[c] += 1
-
-                candidates.remove(pair)
 
         print(f"\n{splitName.upper()} selection:")
         for classID, className in CLASS_NAMES.items():
