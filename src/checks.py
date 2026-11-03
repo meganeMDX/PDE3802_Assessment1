@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parent.parent
 
-TRAIN_DIR = ROOT/"dataset"/"processed"/"train"
-VALID_DIR = ROOT/"dataset"/"processed"/"valid"
-TEST_DIR = ROOT/"dataset"/"processed"/"test"
+TRAIN_DIR = ROOT / "dataset" / "processed" / "train"
+VALID_DIR = ROOT / "dataset" / "processed" / "valid"
+TEST_DIR = ROOT / "dataset" / "processed" / "test"
 
 CLASS_IDS={
     "bottle": 0,
@@ -23,8 +23,8 @@ def check_img_format(folder):
     ''' check all images are in correct format '''
     count_invalid_format = 0
 
-    for imagePath in (folder/"images").glob("*"):
-        if imagePath.suffix.lower() not in IMAGE_EXT:
+    for image_path in (folder/"images").glob("*"):
+        if image_path.suffix.lower() not in IMAGE_EXT:
             count_invalid_format += 1
 
     return count_invalid_format
@@ -66,49 +66,49 @@ def check_annotation_line(line, expectedClassID):
 
 def check_annotations(folder):
     ''' check label annotations '''
-    incorrectCount = 0
+    incorrect_count = 0
 
-    for labelPath in (folder/"labels").glob("*"):
-        labelName = labelPath.stem
-        expectedClassID = CLASS_IDS.get(labelName.split("_")[0])
-        if expectedClassID is None:
+    for label_path in (folder/"labels").glob("*"):
+        label_name = label_path.stem
+        expected_class_id = CLASS_IDS.get(label_name.split("_")[0])
+        if expected_class_id is None:
             print("Invalid annotation")
-            incorrectCount += 1
+            incorrect_count += 1
             break
         
         try:
-            with open(labelPath, "r", encoding="utf-8") as fileObj:
-                content = fileObj.readlines()
+            with open(label_path, "r", encoding="utf-8") as file_obj:
+                content = file_obj.readlines()
 
             if not any(line.strip() for line in content):
-                incorrectCount += 1
+                incorrect_count += 1
                 continue
 
             for line in content:
                 if not line.strip():
                     continue
 
-                if (not check_annotation_line(line, expectedClassID)):
-                    incorrectCount += 1
+                if (not check_annotation_line(line, expected_class_id)):
+                    incorrect_count += 1
 
         except Exception as e:
             print("Error openeing label file: ", e)
 
-    return incorrectCount
+    return incorrect_count
 
 def sets_count(folder):
     ''' get number of images and labels '''
-    imageCount = 0
-    labelCount = 0
+    image_count = 0
+    label_count = 0
 
     for file in (folder/"images").glob("*"):
         if file.suffix.lower() in IMAGE_EXT:
-            imageCount += 1
+            image_count += 1
 
     for file in (folder/"labels").glob("*.txt"):
-        labelCount += 1
+        label_count += 1
 
-    return (imageCount, labelCount)
+    return (image_count, label_count)
 
 def image_count_per_class(folder):
     ''' get number of images per class '''
@@ -116,8 +116,8 @@ def image_count_per_class(folder):
 
     for file in (folder/"images").glob("*"):
         if file.suffix.lower() in IMAGE_EXT:
-            labelName = file.stem
-            class_name = labelName.split("_")[0]
+            label_name = file.stem
+            class_name = label_name.split("_")[0]
             counts[class_name] += 1
 
     return counts
@@ -136,25 +136,25 @@ def plot_image_distribution(classCounts, title):
 
 
 def run_checks(folder, name):
-    imageCount, labelCount = sets_count(folder)    
-    noLabels, noImages = check_pairs(folder)
-    classCounts = image_count_per_class(folder)
+    image_count, label_count = sets_count(folder)    
+    no_labels, no_images = check_pairs(folder)
+    class_counts = image_count_per_class(folder)
 
     print(f"{name} set")
-    print(f"Number of Images: {imageCount}")
-    print(f"Number of Labels: {labelCount}")
+    print(f"Number of Images: {image_count}")
+    print(f"Number of Labels: {label_count}")
     
     print(f"\nImages per class")
-    for className, count in classCounts.items():
-        print(f"{className}: {count}")
+    for class_name, count in class_counts.items():
+        print(f"{class_name}: {count}")
 
     print("\nChecks")
     print(f"Incorrect Image Format: {check_img_format(folder)}")
-    print(f"Images without labels: {len(noLabels)}")
-    print(f"Labels without images: {len(noImages)}")
+    print(f"Images without labels: {len(no_labels)}")
+    print(f"Labels without images: {len(no_images)}")
     print(f"Incorrect annotations: {check_annotations(folder)}\n\n")
 
-    plot_image_distribution(classCounts, f"Image Distribution in {name} folder")
+    plot_image_distribution(class_counts, f"Image Distribution in {name} folder")
 
 
 if __name__ == "__main__":
