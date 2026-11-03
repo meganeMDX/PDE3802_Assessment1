@@ -6,14 +6,14 @@ ROOT = Path(__file__).resolve().parent.parent
 MODEL_PATH = ROOT / "model" / "best.pt"
 GRAPHS = ROOT / "runs" / "detect" / "train"
 APP_TITLE = "Office Items Detector"
-CLASSES = ["Laptop", "Keyboard", "Mouse", "Pendrive", "Mug", "Bottle", "Phone", "Bin"]
+CLASSES = ["Bottle", "Scissors", "Laptop", "Smartphone", "Mug", "Bin", "Mouse"]
 
 # model popup information
 MODEL_INFO = {
     "task": "This object detection model identifies and locates office items in uploaded images or live camera feed.",
-    "uses": "a YOLOv8n model (Ultralytics), fine-tuned on a merged office-item dataset, "
-            "split into 70% training, 20% validation and 10% testing per class. "
-            "Each detection is displayed with a bounding box and a confidence score.",
+    "uses": "a YOLOv11n model (Ultralytics), fine-tuned on a merged office-item dataset, "
+            "split into 70% training, 20% validation and 10% testing sets. "
+            "Each detection is displayed with a bounding box, class label and confidence score.",
     # scores
     "metrics": {
         "Accuracy": None,
