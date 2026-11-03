@@ -8,7 +8,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 IMAGE_DIR =  ROOT / "dataset" / "processed" / "test" / "images"
 LABEL_DIR = ROOT / "dataset" / "processed" / "test" / "labels"
-MODEL_PATH = ROOT / "model" / "best_sixth_baseline.pt"
+MODEL_PATH = ROOT / "model" / "best.pt"
 SAVE_DIR = ROOT / "filter_test_preview"
 FILTERED_DIR = ROOT / "filter_dataset"
 
@@ -173,11 +173,11 @@ def test():
 
     # final results
     print(f"\nYolo11n     ({len(img_path)}images)")
-    print(f"{'Test':<12}   {'mAP50-95':<10}    {'mAP50':<10}    {'Mean Precision':<10}    {'Mean Recall':<10}   {'Det Rate (%)':<12}")
+    print(f"{'Test':<12}   {'mAP50-95':<10}    {'mAP50':<10}    {'Mean Precision':<20}    {'Mean Recall':<20}   {'Det Rate (%)':<12}")
     for name, s in stats.items():
         mAP50_95, mAP50, mp, mr = mAP[name]
         det = 100 * s["with_det"]/ max(s["n"],1)
-        print(f"{name:<12}   {mAP50_95:<10.3f}    {mAP50:<10.3f}    {mp:<10.3f}    {mr:<10.3f}   {det:<12.2f}")
+        print(f"{name:<12}   {mAP50_95:<10.3f}    {mAP50:<10.3f}    {mp:<20.3f}    {mr:<20.3f}   {det:<12.2f}")
 
 if __name__ == "__main__":
     test()
