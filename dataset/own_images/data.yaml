@@ -1,0 +1,15 @@
+path: dataset/own_images
+train: test/images
+val: test/images
+test: test/images
+
+nc: 7
+
+names:
+  0: bottle
+  1: scissors
+  2: laptop
+  3: smartphone
+  4: mug
+  5: bin
+  6: mouse
