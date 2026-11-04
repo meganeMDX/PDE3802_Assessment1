@@ -163,7 +163,7 @@ A target of 700 images was selected per class to keep the dataset manageable whi
 Furthermore, transfer learning was performed by using a pre-trained model with weights learned from a larger dataset and fine-tuning it on the custom dataset. This provided a starting point based on previously learned features and patterns, reducing the need to learn all features from scratch. (GeeksForGeeks, 2025)
 
 ## 10. Additional Evaluation Images
-In addition to the main dataset, a separate collection of images captured independently was used for supplementary evaluation. These images were not included in the training, validation or test splits. Instead, they were used to observe the model's detection performance on additional real-world images captured by our team.
+In addition to the main dataset, a separate collection of independently captured images ([`dataset/own_images/`](../dataset/own_images/)) was used for supplementary evaluation. This collection consists only of a test set and was not included in the training, validation or test splits. It contains 10 images per class and was annotated using Roboflow. The images were captured by our team and used to further assess the model's object detection performance on additional real-world images.
 
 ## 11. Dataset Attributions and Licensing
 | Object  | Author  | Year    | License  |
