@@ -1,9 +1,10 @@
 from ultralytics import YOLO
 import numpy as np
-from IPython.display import Image, display
+from pathlib import Path
 
-MODEL_PATH = "runs/detect/office_items_detection/weights/best.pt"
-CONFIG_FILE = "dataset/data.yaml"
+ROOT = Path(__file__).resolve().parent.parent
+MODEL_PATH = ROOT / "model" / "best.pt"
+CONFIG_FILE = ROOT / "dataset" / "data.yaml"
 
 model = YOLO(MODEL_PATH)
 
@@ -14,21 +15,25 @@ results = model.val(
 )
 
 # Overall metrics
-print("\nmAP50-95:", round(results.box.map, 2))  
-print("mAP50:", round(results.box.map50, 2))  
-print("mAP75:", round(results.box.map75, 2))  
-print("Mean precision:", round(results.box.mp, 2))
-print("Mean recall:", round(results.box.mr, 2))
+print("\nmAP50-95:", round(results.box.map, 3))  
+print("mAP50:", round(results.box.map50, 3))  
+print("mAP75:", round(results.box.map75, 3))  
+print("Mean precision:", round(results.box.mp, 3))
+print("Mean recall:", round(results.box.mr, 3))
 
-# Per-class metrics
-print("\nClass indices evaluated:", results.box.ap_class_index)
-print("Per-class mAP50-95:", results.box.maps)
-    
-cm = results.confusion_matrix.matrix
-nc = len(results.names)
-print("\nClass names:", results.names)
-print("Confusion matrix shape:", cm.shape)
-print(cm)
+# for confusion matrix, macro metrics and accuracy
+results_cm = model.val(
+    data=CONFIG_FILE,
+    split="test",
+    imgsz=640,
+    conf=0.25,
+    iou=0.45,
+    verbose=False
+)
+
+cm = results_cm.confusion_matrix.matrix
+nc = len(results_cm.names)
+print("\nClass names:", results_cm.names)
 
 # calculate accuracy, precision, recall and F1
 # Adapted from glenn-jocher (2024), Ultralytics GitHub issue #9946
@@ -44,23 +49,14 @@ recall = np.divide(TP, TP + FN, out=np.zeros(nc), where=(TP + FN) > 0)
 f1 = np.divide(2 * precision * recall, precision + recall, out=np.zeros(nc), where=(precision + recall) > 0) 
 
 for i in range(nc):
-    print(f"{results.names[i]:15s} P={precision[i]:.2f} R={recall[i]:.2f} F1={f1[i]:.2f}")
+    print(f"{results_cm.names[i]:15s} P={precision[i]:.3f} R={recall[i]:.3f} F1={f1[i]:.3f}")
 
 precision_overall = np.mean(precision)
 recall_overall = np.mean(recall)
 f1_overall = np.mean(f1)
 accuracy = TP.sum()/ cm.sum()
 
-print(f"\nPrecision: {round(precision_overall, 2)}")
-print(f"Recall: {round(recall_overall, 2)}")
-print(f"Macro-F1: {round(f1_overall, 2)}")
-print(f"Accuracy: {round(accuracy, 2)}")
-
-graphs = [
-    "confusion_matrix_normalized.png",
-    "BoxPR_curve.png",
-    "BoxF1_curve.png",
-    "val_batch0_pred.jpg" 
-]
-for graph in graphs:
-    display(Image(filename=f"{results.save_dir}/{graph}"))
+print(f"\nMacro-Precision: {round(precision_overall, 3)}")
+print(f"Macro-Recall: {round(recall_overall, 3)}")
+print(f"Macro-F1: {round(f1_overall, 3)}")
+print(f"Detection Accuracy: {round(accuracy, 3)}")
