@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MODEL_PATH = ROOT / "model" / "best.pt"
-GRAPHS = ROOT / "runs" / "detect" / "train"
+GRAPHS = ROOT / "assets"
 APP_TITLE = "Office Items Detector"
 CLASSES = ["Bottle", "Scissors", "Laptop", "Smartphone", "Mug", "Bin", "Mouse"]
 
@@ -16,11 +16,11 @@ MODEL_INFO = {
             "Each detection is displayed with a bounding box, class label and confidence score.",
     # scores
     "metrics": {
-        "Accuracy": None,
-        "Precision": None,
-        "Recall": None,
-        "F1 Score": None,
-        "mAP@50": None,
+        "Precision": 0.857,
+        "Recall": 0.837,
+        "mAP@50": 0.882,
+        "mAP@75": 0.760,
+        "mAP@50-95": 0.703
     },
     "graphs": [
         ("Confusion matrix", GRAPHS / "confusion_matrix.png"),
