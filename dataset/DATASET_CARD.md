@@ -130,6 +130,11 @@ dataset/
 ├── DATASET_CARD.md
 │
 └── own_images/
+    ├── test/
+    │   ├── images/
+    │   └── labels/
+    │ 
+    └── data.yaml
 ```
 
 - **processed/**: Contains the final merged dataset used by the model, organised into training, validation and testing sets.
