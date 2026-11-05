@@ -1,0 +1,12 @@
+# 10/10 iterations complete ✅ (4190.98s)
+# Results saved to /content/drive/MyDrive/PDE3802/tuning/office_items_tuning
+# Best fitness=0.64841 observed at iteration 7
+# Best fitness metrics are {'metrics/precision(B)': 0.80999, 'metrics/recall(B)': 0.78837, 'metrics/mAP50(B)': 0.83389, 'metrics/mAP50-95(B)': 0.64841, 'val/box_loss': 0.83883, 'val/cls_loss': 0.79167, 'val/dfl_loss': 1.25264, 'fitness': 0.64841}
+# Best fitness model is /content/drive/MyDrive/PDE3802/tuning/office_items_tuning/weights
+lr0: 0.003
+lrf: 0.01
+weight_decay: 0.00033
+degrees: 0.0
+translate: 0.08996
+scale: 0.52457
+mosaic: 0.99286
