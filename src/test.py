@@ -35,7 +35,7 @@ cm = results_cm.confusion_matrix.matrix
 nc = len(results_cm.names)
 print("\nClass names:", results_cm.names)
 
-# calculate accuracy, precision, recall and F1
+# calculate macro-precision, macro-recall and macro-F1
 # Adapted from glenn-jocher (2024), Ultralytics GitHub issue #9946
 # "YOLOv8 classification metrics"
 # Available at: https://github.com/ultralytics/ultralytics/issues/9946#issuecomment-2132207985
@@ -54,9 +54,7 @@ for i in range(nc):
 precision_overall = np.mean(precision)
 recall_overall = np.mean(recall)
 f1_overall = np.mean(f1)
-accuracy = TP.sum()/ cm.sum()
 
 print(f"\nMacro-Precision: {round(precision_overall, 3)}")
 print(f"Macro-Recall: {round(recall_overall, 3)}")
 print(f"Macro-F1: {round(f1_overall, 3)}")
-print(f"Detection Accuracy: {round(accuracy, 3)}")
