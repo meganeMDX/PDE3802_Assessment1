@@ -46,6 +46,7 @@ The project includes a Streamlit web application that allows users to upload ima
 ├── experiment/  
 │
 ├── model/  
+│   └── best.pt
 │
 ├── notebook/
 │   └── model_training_tuning.ipynb
@@ -85,20 +86,20 @@ The project includes a Streamlit web application that allows users to upload ima
 
 **Main Folder and Files**
 
-| File/Folder                  | Description                                                                                                                          |
-| :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| .streamlit/config.toml       | Configuration settings for the Streamlit application                                                                                 |
-| assets/                      | Contains supporting images, including dataset class distribution graphs, UI screenshots and captured model performance metrics .                                          |
-| dataset/                     | Contains the processed dataset, YOLO dataset configuration file (data.yaml), the dataset card and `own_images/` folder with additional real-world images.                                |
-| experiment/         | Contains images showing model's detection results after applying different image transformations.   |
-| model/                       | Contains a copy of the final model used by the interface for object detection.                                                       |
-| notebook/                    | Contains the Google Colab notebook used for model training, hyperameter tuning and experimentation.                                                     |
-| preview_with_bounding_boxes/ | Contains preview images from the training set with bounding boxes drawn around annotated objects.                                    |
-| requirements.txt             | Contains the dependencies required to run the application.                                                                           |
-| runs/                        | Stores outputs generated during model training and testing.                                                                          |
-| src/                         | Contains python scripts for preprocessing, dataset checks, annotation inspection, model training, and evaluation. |
-| ui/                          | Contains configuration and styling files used by the Streamlit interface.                                                            |
-| app.py                       | Entry point for the Streamlit interface.                                                                                             |
+| File/Folder                  | Description                                                                                                                                                                                                                        |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| .streamlit/config.toml       | Configuration settings for the Streamlit application                                                                                                                                                                               |
+| assets/                      | Contains supporting images, including dataset class distribution graphs, UI screenshots and captured model performance metrics .                                                                                                   |
+| dataset/                     | Contains the final processed dataset used for model training and evaluation (`dataset/processed/`) YOLO dataset configuration file (data.yaml), the dataset card and  `own_images/` folder with additional real-world images. |
+| experiment/                  | Contains images showing model's detection results after applying different image transformations.                                                                                                                                  |
+| model/                       | Contains a copy of the final model (`best.pt`) used by the interface for object detection.                                                                                                                                       |
+| notebook/                    | Contains the Google Colab notebook used for model training, hyperameter tuning and experimentation.                                                                                                                                |
+| preview_with_bounding_boxes/ | Contains preview images from the training set with bounding boxes drawn around annotated objects.                                                                                                                                  |
+| requirements.txt             | Contains the dependencies required to run the application.                                                                                                                                                                         |
+| runs/                        | Stores outputs generated during model training and testing.                                                                                                                                                                        |
+| src/                         | Contains python scripts for preprocessing, dataset checks, annotation inspection, model training, and evaluation.                                                                                                                  |
+| ui/                          | Contains configuration and styling files used by the Streamlit interface.                                                                                                                                                          |
+| app.py                       | Entry point for the Streamlit interface.                                                                                                                                                                                           |
 
 **Scripts in src/**
 
@@ -106,13 +107,13 @@ The project includes a Streamlit web application that allows users to upload ima
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | breaking.py            | Applies image transformation (rotation, brightness reduction, blur and size reduction ) to evaluate the model robustness under different image conditions. |
 | checks.py              | Performs checks on the final merged dataset.                                                                                                               |
-| evaluate_own_images.py | Performs an additional assessment of model performance an real-world images  .                                                                                            |
+| evaluate_own_images.py | Performs an additional assessment of model performance an real-world images  .                                                                             |
 | inspect_annotations.py | Generate previews of training images with their bounding boxes.                                                                                            |
 | preprocessing.py       | Preprocesses, retrieves valid image-label pairs and combines final dataset.                                                                                |
 | test.py                | Tests the trained model and evaluates its performance.                                                                                                     |
 | train.py               | Trains the YOLO object detection model (baseline training).                                                                                                |
 
-Model training and hyperameter tuning were performed using Google Colab for GPU acceleration. 
+Model training and hyperameter tuning were performed using Google Colab for GPU acceleration.
 
 For details about the dataset, including its organisation, sources, licensing information and the rationale behind the dataset and model selection, see the [Dataset card](dataset/DATASET_CARD.md).
 
@@ -239,7 +240,7 @@ The following table lists common issues that may occur when running the applicat
 | The application does not open in the browser automatically.                    | Follow the **local URL** displayed in the terminal.                                                                                                                                             |
 | `ModuleNotFoundError`                                                        | Install the missing Python module and ensure that all required dependencies listed in the [Installation](#5-installation) section are installed.                                                       |
 | The camera does not work.                                                      | Click on **SELECT DEVICE** to verify that the correct camera is selected. If the issue persists, check your browser's camera permissions and ensure that the camera is connected and available. |
-| The YOLO model cannot be found.                                                | Ensure that the trained model file (`best.pt`) exists at the path specified by `MODEL_PATH` in [`ui/config.py`](ui/config.py).                                                                                  |
+| The YOLO model cannot be found.                                                | Ensure that the trained model file (`best.pt`) exists at the path specified by `MODEL_PATH` in [`ui/config.py`](ui/config.py).                                                                   |
 
 If the problem persists, check the error messages displayed in the terminal where the application was started.
 
@@ -273,18 +274,18 @@ git config --global core.longpaths true
 
 The selected baseline YOLO11n model was evaluated on the test set, which consisted of 490 images across 7 classes. It achieved the following results on the test split:
 
-| Metric             | Value |
-| ------------------ | ----- |
-| mAP50-95           | 0.703 |
-| mAP50              | 0.882 |
-| mAP75              | 0.760 |
-| Mean precision     | 0.857 |
-| Mean recall        | 0.837 |
-| Macro-Precision    | 0.829 |
-| Macro-Recall       | 0.858 |
-| Macro-F1           | 0.841 |
+| Metric          | Value | Why it was used                                                                                                                                                                                                                            |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| mAP50-95        | 0.703 | Assesses bounding-box precision under strictest overlap requirements, supporting accurate object positioning for manipulation and displacement monitoring.                                                                                 |
+| mAP50           | 0.882 | Measures detection performance at IoU 0.5 and helps assess progress towards the robot's target of at least 85% mAP@0.5.                                                                                                                    |
+| mAP75           | 0.760 | Evaluates stricter bounding-box overlap, important when estimating object positions for fetching and manipulation.                                                                                                                        |
+| Mean precision  | 0.857 | Measures the reliability of detections, helping reduce false object identifications during organisation and monitoring.                                                                                                                    |
+| Mean recall     | 0.837 | Measures how effectively the model detects visible objects, which is important for locating requested items and monitoring flagged equipment.                                                                                              |
+| Macro-Precision | 0.829 | Measures the reliability of predictions at the selected confidence threshold of 0.25, giving equal importance to all seven classes. This matters because false detections could cause the robot to fetch, organise or flag the wrong item. |
+| Macro-Recall    | 0.858 | Measures how effectively the model detects objects across all seven classes at the selected threshold. Missed detections could prevent the robot from retrieving an item or cause false alarms during monitoring.                         |
+| Macro-F1        | 0.841 | Provides a summary of the trade-off between correct predictions and missed objects across the seven classes. This is useful because the robot must detect office items while minimising incorrect predictions across all classes.         |
 
-The baseline model achieves a strong overall performance with a Macro-F1 of 0.841, which indicates that macro-precision (0.829) and macro-recall (0.858) are reasonably balanced across all 7 classes. Recall being the higher of the two means the model misses relatively few objects at the cost of a few more false positives. The mAP@0.5 of 0.882 shows strong object detection performance when a predicted box only needs to overlap the ground truth by 50%. The lower mAP@0.5:0.95 of 0.703 reflects the stricter bounding box requirement at higher IoU thresholds, where detections are still correct but the boxes fall short on precision.
+The baseline model achieves a strong overall performance with a Macro-F1 of 0.841, which indicates that macro-precision (0.829) and macro-recall (0.858) are reasonably balanced across all 7 classes. Recall being the higher of the two at the fixed 0.25 threshold means the model misses relatively few objects at the cost of a few more false positives. The mean precision (0.857) and mean recall (0.837) reported by Ultralytics further support the model's performance, suggesting that it can serve as a reliable starting point for office item detection in the intended robotic system. The mAP@0.5 of 0.882 shows strong object detection performance when a predicted box only needs to overlap the ground truth by 50%. The lower mAP@0.5:0.95 of 0.703 reflects the stricter bounding box requirement at higher IoU thresholds, where detections are still correct but the boxes fall short on precision.
 
 #### Per-class results
 
