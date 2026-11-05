@@ -167,7 +167,7 @@ header[data-testid="stHeader"]{
   background:#fff;
   border:7px solid #000;
   border-radius:18px;
-  padding:1rem;
+  padding:0 1rem 1rem;
   min-height:300px;
   display:flex;
   align-items:center;
@@ -178,7 +178,6 @@ header[data-testid="stHeader"]{
   max-width:100%;
   max-height:520px;
   margin:0 auto;
-  border-radius:6px;
 }
 .image-reveal{
   animation:revealAnimation .6s ease-out;
