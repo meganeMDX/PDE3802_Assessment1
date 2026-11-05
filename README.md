@@ -43,12 +43,12 @@ The project includes a Streamlit web application that allows users to upload ima
 │   │   
 │   └── DATASET_CARD.md
 │
-├── filter_test_preview/  
+├── experiment/  
 │
 ├── model/  
 │
 ├── notebook/
-│   └── model_training.ipynb
+│   └── model_training_tuning.ipynb
 │
 ├── preview_with_bounding_boxes/
 │
@@ -61,15 +61,15 @@ The project includes a Streamlit web application that allows users to upload ima
 │   │   
 │   ├── checks.py
 │   │   
+│   ├── evaluate_own_images.py
+│   │   
 │   ├── inspect_annotations.py
 │   │   
 │   ├── preprocessing.py
 │   │   
 │   ├── test.py
 │   │   
-│   ├── train.py
-│   │   
-│   └── tuning.py
+│   └── train.py
 │
 ├── ui/
 │   ├── config.py
@@ -88,15 +88,15 @@ The project includes a Streamlit web application that allows users to upload ima
 | File/Folder                  | Description                                                                                                                          |
 | :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
 | .streamlit/config.toml       | Configuration settings for the Streamlit application                                                                                 |
-| assets/                      | Contains supporting images, including dataset class distribution graphs and UI screenshots.                                          |
-| dataset/                     | Contains the processed dataset, the YOLO dataset configuration file (data.yaml) and the dataset card.                                |
-| filter_test_preview/         | Contains images showing model's detection results after applying different image transformations to a subset of the test set         |
+| assets/                      | Contains supporting images, including dataset class distribution graphs, UI screenshots and captured model performance metrics .                                          |
+| dataset/                     | Contains the processed dataset, YOLO dataset configuration file (data.yaml), the dataset card and `own_images/` folder with additional real-world images.                                |
+| experiment/         | Contains images showing model's detection results after applying different image transformations.   |
 | model/                       | Contains a copy of the final model used by the interface for object detection.                                                       |
-| notebook/                    | Contains the Google Colab notebook used for model training, tuning and testing.                                                      |
+| notebook/                    | Contains the Google Colab notebook used for model training, hyperameter tuning and experimentation.                                                     |
 | preview_with_bounding_boxes/ | Contains preview images from the training set with bounding boxes drawn around annotated objects.                                    |
 | requirements.txt             | Contains the dependencies required to run the application.                                                                           |
 | runs/                        | Stores outputs generated during model training and testing.                                                                          |
-| src/                         | Contains python scripts for preprocessing, dataset checks, annotation inspection, model training, hyperparameter tuning and testing. |
+| src/                         | Contains python scripts for preprocessing, dataset checks, annotation inspection, model training, and evaluation. |
 | ui/                          | Contains configuration and styling files used by the Streamlit interface.                                                            |
 | app.py                       | Entry point for the Streamlit interface.                                                                                             |
 
@@ -106,13 +106,13 @@ The project includes a Streamlit web application that allows users to upload ima
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | breaking.py            | Applies image transformation (rotation, brightness reduction, blur and size reduction ) to evaluate the model robustness under different image conditions. |
 | checks.py              | Performs checks on the final merged dataset.                                                                                                               |
+| evaluate_own_images.py | Performs an additional assessment of model performance an real-world images  .                                                                                            |
 | inspect_annotations.py | Generate previews of training images with their bounding boxes.                                                                                            |
 | preprocessing.py       | Preprocesses, retrieves valid image-label pairs and combines final dataset.                                                                                |
 | test.py                | Tests the trained model and evaluates its performance.                                                                                                     |
 | train.py               | Trains the YOLO object detection model (baseline training).                                                                                                |
-| tuning.py              | Performs hyperparameter tuning to explore model configurations and improve performance.                                                                    |
 
-Model training, tuning and testing were performed using Google Colab for GPU acceleration. The scripts are available in **src/** directory.
+Model training and hyperameter tuning were performed using Google Colab for GPU acceleration. 
 
 For details about the dataset, including its organisation, sources, licensing information and the rationale behind the dataset and model selection, see the [Dataset card](dataset/DATASET_CARD.md).
 
@@ -156,19 +156,21 @@ cd PDE3802_Assessment1
 pip install -r requirements.txt
 ```
 
+If you encounter any issues during installation, refer to the [Troubleshooting](#9-troubleshooting) section.
+
 ## 6. How to Run
 
 Follow the steps below to run the application after installing the dependencies:
 
 1. Open a terminal in the project's root directory
 
-```
+```bash
 cd PDE3802_Assessment1
 ```
 
 2. Run the following command in the terminal to start the application:
 
-```
+```bash
 streamlit run app.py
 ```
 
@@ -179,36 +181,38 @@ streamlit run app.py
 
 Once the application opens in your browser, you can use the following features:
 
-### Upload an Image
+### i. Upload an Image
 
 Upload an image containing office items and click on **Analyse Image** button. The application displays the uploaded image with the bounding boxes drawn around detected objects, their predicted class labels and confidence scores.
 
-[Insert annotated image of where to upload image and button to click]
+<img src="assets/upload_image_screenshot.png" width="550" height="350" alt="How to upload image for detection">
 
-[Insert annotated image of analysed result section]
+<img src="assets/image_result_screenshot.png" width="550" height="350" alt="Uploaded image result">
 
-### Live Camera
+### ii. Live Camera
 
 Click the **Live Camera** Button. Real-time detection is selected by default. Click **START** to begin real-time detection. Detected objects, their bounding boxes and confidence scores will appear on the video frame.
 
 You can click on **SELECT DEVICE** to choose a different camera or video input device.
 
-[Insert annotated image of live detection - with button to click]
+<img src="assets/live_detection1_screenshot.png" width="550" height="350" alt="How to start live detection">
 
-[Insert image of live detection example]
+<img src="assets/live_detection2_screenshot.png" width="550" height="350" alt="Live detection example">
 
-### Capture an Image from the Camera
+### iii. Capture an Image from the Camera
 
 Select **Take a Photo** to open the camera capture interface. Click **Take Photo** below the camera feed to capture an image. Then, click on **Analyse Image** to run object detection on the captured image.
 
-[Insert annotated image of what button to click to capture image]
+<img src="assets/capture_image1_screenshot.png" width="550" height="350" alt="How to capture an image">
+<img src="assets/capture_image2_screenshot.png" width="550" height="350" alt="How to analyse image">
+<img src="assets/capture_image3_screenshot.png" width="550" height="350" alt="Captured image result example">
 
-### View Model Performance Metrics
+### iv. View Model Performance Metrics
 
 Click the information icon to open a popup displaying details about the model and its performance based on the held-out test data.
 
-[Insert annotated image of what button to click to open popup]
-[Insert image of popup]
+<img src="assets/popup_btn_screenshot.png" width="550" height="250" alt="Where to click to open popup">
+<img src="assets/popup_screenshot.png" width="550" height="350" alt="Popup with metrics">
 
 ## 8. Expected Outputs
 
@@ -220,7 +224,7 @@ The expected outputs include:
 - **Bounding Boxes:** Rectangular boxes drawn around detected objects to indicate their locations in the image or camera feed.
 - **Confidence Scores:** Scores indicating the model's confidence in each detection.
 
-If no objects belonging to the 7 supported classes are detected, no bounding boxes, labels or confidence scores are displayed. Instead, the message "No object detected" is displayed.
+If the model does not detect any object among the 7 classes, no bounding boxes, labels or confidence scores are displayed. Instead, the message "No object detected" is displayed.
 
 ## 9. Troubleshooting
 
@@ -235,8 +239,7 @@ The following table lists common issues that may occur when running the applicat
 | The application does not open in the browser automatically.                    | Follow the **local URL** displayed in the terminal.                                                                                                                                             |
 | `ModuleNotFoundError`                                                        | Install the missing Python module and ensure that all required dependencies listed in the [Installation](#5-installation) section are installed.                                                       |
 | The camera does not work.                                                      | Click on **SELECT DEVICE** to verify that the correct camera is selected. If the issue persists, check your browser's camera permissions and ensure that the camera is connected and available. |
-| The YOLO model cannot be found.                                                | Ensure that the trained model file (`best.pt`) exists at the path specified by `MODEL_PATH` in `ui/config.py`.                                                                                  |
-| Live camera detection is lagging.                                              | Reduce `imgsz` in the `detect_live_frame` function from **640** to **320**.                                                                                                           |
+| The YOLO model cannot be found.                                                | Ensure that the trained model file (`best.pt`) exists at the path specified by `MODEL_PATH` in [`ui/config.py`](ui/config.py).                                                                                  |
 
 If the problem persists, check the error messages displayed in the terminal where the application was started.
 
@@ -280,7 +283,6 @@ The selected baseline YOLO11n model was evaluated on the test set, which consist
 | Macro-Precision    | 0.829 |
 | Macro-Recall       | 0.858 |
 | Macro-F1           | 0.841 |
-| Detection Accuracy | 0.725 |
 
 The baseline model achieves a strong overall performance with a Macro-F1 of 0.841, which indicates that macro-precision (0.829) and macro-recall (0.858) are reasonably balanced across all 7 classes. Recall being the higher of the two means the model misses relatively few objects at the cost of a few more false positives. The mAP@0.5 of 0.882 shows strong object detection performance when a predicted box only needs to overlap the ground truth by 50%. The lower mAP@0.5:0.95 of 0.703 reflects the stricter bounding box requirement at higher IoU thresholds, where detections are still correct but the boxes fall short on precision.
 
@@ -303,7 +305,7 @@ The model performs best on smartphones, which achieve the highest F1-score (93.9
 
 The confusion matrix below provides a more detailed view of the model's predictions on the held-out test set. Correct classifications appear along the diagonal, while off-diagonal entries indicate instances assigned to an incorrect class. The background row represents missed objects, and the background column represents false-positive detections.
 
-![1793875053898](image/README/1793875053898.png)
+![Confusion Matrix](assets/confusion_matrix.png)
 
 The confusion matrix shows that the model correctly classified 533 of 622 objects, with very few class confusions: only two objects were assigned the wrong class, both predicted as mugs. Most errors involved missed objects (87) or false positives (113), suggesting that the main challenge is detecting objects reliably rather than distinguishing between classes. Laptops were the most frequently missed, accounting for 26 missed objects, while mugs were the most over-predicted, contributing 39 false positives. In contrast, smartphone, bin and mouse had low miss rates, with smartphones also producing the fewest false positives. Overall, the model separates the seven classes well, with a strong diagonal.
 
@@ -311,7 +313,7 @@ The confusion matrix shows that the model correctly classified 533 of 622 object
 
 Following the selection of the baseline model, breaking.py was run on a subset of 35 held-out test images to investigate performance under altered image conditions. The script evaluated the original images and transformed versions involving rotation, darkness, blur and size reduction.
 
-![1793875077494](image/README/1793875077494.png)
+![Model Evaluation after applying transformations](assets/breaking_test_metrics.png)
 
 The baseline model maintained a detection rate of 94.29% under dark conditions, with mAP@0.5:0.95 falling by only 4% and precision remaining stable. These results suggest that the model handles reduced lighting well. Under reduced image sizes, the model stayed fairly reliable, with detection rate at 94.29% and precision at 89.8%, though mAP50-95 fell 17%. The main issue was reduced recall, which fell from 83.3% to 65.1%, indicating that the model missed more small objects or placed their boxes less precisely.
 
@@ -323,16 +325,16 @@ The robustness results complement the main test-set evaluation by showing how pe
 
 Although the model achieved correct detections across all seven classes, some weaknesses were observed during testing:
 
-1. *Laptop Detection:* The laptop class had the lowest recall among the seven classes in the reported test results (62.0%). The confusion matrix shows that 26 laptop instances were missed, which may be related to variations in viewing angle and object appearance.
-2. *Misclassifications:* The model occasionally classified bins as mugs. This could be due to the shape of open bins resembling the structure of mugs. It also showed difficulties distinguishing between laptops and smartphones at times when viewed from certain angles. The confusion matrix shows overlap between these two classes. While smartphone precision is high (0.954), laptop recall is the lowest of all classes (0.620) This may be due to the similar appearance of closed laptops and smartphones, as well as the presence of screens on both objects. For instance, a smartphone may resemble the screen of a laptop, especially during live camera detection.
-3. *Mouse is sensitive to orientation:* Although mouse recall is high, it still produces false positives. During live testing, it was observed that the model's detection performance for mouse also varied with object orientation, especially when viewed at an angle.
-4. *False positive detections:* The confusion matrix recorded false positive predictions for multiple classes. Mugs had the highest number of false positives (39), followed by bottles with 20 false positives. These errors suggest that some detected objects or visual features in the image may resemble the target classes.
-5. *Missed detections (False Negatives):* The background row indicates missed instances across multiple classes, particularly laptops (26), mugs (19) and bottles (13). Improving the representation of difficult viewpoints and object appearances may help reduce these errors.
-6. *Robustness Limitations (Rotation and Blur):* The breaking.py was rerun on the test set for the baseline model and showed that the model struggles most with rotated and blurred images. Mean recall decreased from 83.3% on original images to 61.8% on rotated images and 57.6% on blurred images. This suggests that changes in object orientation and image sharpness can negatively affect detection. Increasing dataset diversity, particularly by including more examples of challenging angles and blurred objects could help improve the detection performance. Additionally, better GPU capabilities would allow for more extensive experimentation, including training with larger datasets and tuning the model using more epochs and iterations.
+1. **Laptop Detection:** The laptop class had the lowest recall among the seven classes in the reported test results (62.0%). The confusion matrix shows that 26 laptop instances were missed, which may be related to variations in viewing angle and object appearance.
+2. **Misclassifications:** The model occasionally classified bins as mugs. This could be due to the shape of open bins resembling the structure of mugs. It also showed difficulties distinguishing between laptops and smartphones at times when viewed from certain angles. The confusion matrix shows overlap between these two classes. While smartphone precision is high (0.954), laptop recall is the lowest of all classes (0.620) This may be due to the similar appearance of closed laptops and smartphones, as well as the presence of screens on both objects. For instance, a smartphone may resemble the screen of a laptop, especially during live camera detection.
+3. **Mouse is sensitive to orientation:** Although mouse recall is high, it still produces false positives. During live testing, it was observed that the model's detection performance for mouse also varied with object orientation, especially when viewed at an angle.
+4. **False positive detections:** The confusion matrix recorded false positive predictions for multiple classes. Mugs had the highest number of false positives (39), followed by bottles with 20 false positives. These errors suggest that some detected objects or visual features in the image may resemble the target classes.
+5. **Missed detections (False Negatives):** The background row indicates missed instances across multiple classes, particularly laptops (26), mugs (19) and bottles (13). Improving the representation of difficult viewpoints and object appearances may help reduce these errors.
+6. **Robustness Limitations (Rotation and Blur):** The breaking.py was rerun on the test set for the baseline model and showed that the model struggles most with rotated and blurred images. Mean recall decreased from 83.3% on original images to 61.8% on rotated images and 57.6% on blurred images. This suggests that changes in object orientation and image sharpness can negatively affect detection. Increasing dataset diversity, particularly by including more examples of challenging angles and blurred objects could help improve the detection performance. Additionally, better GPU capabilities would allow for more extensive experimentation, including training with larger datasets and tuning the model using more epochs and iterations.
 
 ## 11. Real-World Evaluation
 
-The selected model was also evaluated on a separate collection of 70 independent images across the seven classes [(dataset/own_images/)](../dataset/own_images/), with 10 images per class captured using our own devices. This additional experiment assessed the model's ability to generalise to additional captured images of the target objects beyond those included in the official test evaluation.
+The selected model was also evaluated on a separate collection of 70 independent images across the seven classes [(dataset/own_images/)](dataset/own_images/), with 10 images per class captured using our own devices. This additional experiment assessed the model's ability to generalise to additional captured images of the target objects beyond those included in the official test evaluation.
 
 The model achieved a mAP50 of 95.7%, mAP50-95 of 84.6%, mean precision of 85.3%, and mean recall of 88.3%. These results indicate strong detection performance on this image collection. The difference between mAP50 and mAP50–95 also suggests that localisation performance is less consistent under stricter bounding-box overlap requirements.
 
